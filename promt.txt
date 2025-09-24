@@ -1,0 +1,34 @@
+Bạn là chuyên gia Android/Java.  
+Tôi có một đoạn code quản lý menu game (Back menu + Sub menu Advanced).  
+Nhiệm vụ:
+1. Đọc code, cho tôi biết thứ tự hiện tại của các tính năng trong Back menu và Sub menu (Advanced) trong file app/src/main/java/com/limelight/GameMenu.java
+2. Sửa code để sắp xếp lại menu theo thứ tự sau:
+
+Back menu (menu chính):
+1. Disconnect (Ngắt kết nối game stream)
+2. Hiển thị gamepad (Toggle Virtual Model / Virtual Controller)
+3. Hiển thị bàn phím mềm (Toggle Keyboard)
+4. Hiển thị bàn phím đầy đủ (Toggle Virtual Keyboard Model)
+5. Hiển thị phím đặc biệt (Send Keys)
+6. Chọn chế độ chuột (Select Mouse Mode)
+7. Bật Pan/Zoom (Enable/Disable Zoom Mode)
+8. Xoay màn hình (Rotate Screen)
+9. Tùy chọn nâng cao (Advanced)
+10. Thoát phiên (Quit Session)
+11. Hủy (Cancel)
+
+Sub menu Advanced:
+1. Hiển thị lớp phủ hiệu suất (Toggle HUD)
+2. Thay đổi độ nhạy cảm ứng (Switch Touch Sensitivity Model)
+3. Gửi nội dung clipboard (Upload Clipboard)
+4. Lấy nội dung clipboard (Fetch Clipboard)
+5. Lệnh máy chủ (Server Cmd)
+6. Mở trình Task Manager (Task Manager = Ctrl+Shift+Esc)
+7. Gửi phím đặc biệt (Send Keys)
+8. Hủy (Cancel)
+
+Yêu cầu khi sửa code:
+- Giữ nguyên logic gốc (if/else, check context, allowChangeMouseMode...).
+- Chỉ thay đổi **thứ tự addItem()** trong back menu và submenu.
+- Không làm mất các điều kiện hiển thị (ví dụ: chỉ hiển thị Rotate nếu context = game).
+- Xuất code sau khi chỉnh sửa, không giải thích thêm.
