@@ -154,7 +154,7 @@ public class GameMenu implements Game.GameMenuCallbacks {
     private void showSpecialKeysMenu() {
         List<MenuOption> options = new ArrayList<>();
 
-        if(!PreferenceConfiguration.readPreferences(game).enableClearDefaultSpecial){
+        if(!PreferenceConfiguration.readPreferences(game).disableDefaultExtraKeys){
             options.add(new MenuOption(getString(R.string.game_menu_send_keys_esc),
                     () -> sendKeys(new short[]{KeyboardTranslator.VK_ESCAPE})));
 
@@ -188,9 +188,6 @@ public class GameMenu implements Game.GameMenuCallbacks {
             options.add(new MenuOption(getString(R.string.game_menu_send_keys_win_shift_left),
                     () -> sendKeys(new short[]{KeyboardTranslator.VK_LWIN, KeyboardTranslator.VK_LSHIFT, KeyboardTranslator.VK_LEFT})));
 
-            options.add(new MenuOption(getString(R.string.game_menu_send_keys_ctrl_alt_shift_q),
-                    () -> sendKeys(new short[]{KeyboardTranslator.VK_LCONTROL,KeyboardTranslator.VK_LMENU, KeyboardTranslator.VK_LSHIFT, KeyboardTranslator.VK_Q})));
-
             options.add(new MenuOption(getString(R.string.game_menu_send_keys_ctrl_alt_shift_f1),
                     () -> sendKeys(new short[]{KeyboardTranslator.VK_LCONTROL,KeyboardTranslator.VK_LMENU, KeyboardTranslator.VK_LSHIFT, KeyboardTranslator.VK_F1})));
 
@@ -199,53 +196,38 @@ public class GameMenu implements Game.GameMenuCallbacks {
 
             options.add(new MenuOption(getString(R.string.game_menu_send_keys_alt_b),
                     () -> sendKeys(new short[]{KeyboardTranslator.VK_LWIN, KeyboardTranslator.VK_LMENU, KeyboardTranslator.VK_B})));
-            options.add(new MenuOption(getString(R.string.game_menu_send_keys_win_x_u_s), () -> {
-                sendKeys(new short[]{KeyboardTranslator.VK_LWIN, KeyboardTranslator.VK_X});
-                new Handler().postDelayed((() -> sendKeys(new short[]{KeyboardTranslator.VK_U, KeyboardTranslator.VK_S})), 200);
-            }));
-            options.add(new MenuOption(getString(R.string.game_menu_send_keys_win_x_u_u), () -> {
-                sendKeys(new short[]{KeyboardTranslator.VK_LWIN, KeyboardTranslator.VK_X});
-                new Handler().postDelayed((() -> sendKeys(new short[]{KeyboardTranslator.VK_U, KeyboardTranslator.VK_U})), 200);
-            }));
-            options.add(new MenuOption(getString(R.string.game_menu_send_keys_win_x_u_r), () -> {
-                sendKeys(new short[]{KeyboardTranslator.VK_LWIN, KeyboardTranslator.VK_X});
-                new Handler().postDelayed((() -> sendKeys(new short[]{KeyboardTranslator.VK_U, KeyboardTranslator.VK_R})), 200);
-            }));
-            options.add(new MenuOption(getString(R.string.game_menu_send_keys_win_x_u_i), () -> {
-                sendKeys(new short[]{KeyboardTranslator.VK_LWIN, KeyboardTranslator.VK_X});
-                new Handler().postDelayed((() -> sendKeys(new short[]{KeyboardTranslator.VK_U, KeyboardTranslator.VK_I})), 200);
-            }));
-
         }
 
-        //自定义导入的指令
+        // Import custom shortcuts
         SharedPreferences preferences = game.getSharedPreferences(PREF_NAME, Activity.MODE_PRIVATE);
         String value = preferences.getString(KEY_NAME,"");
 
         if(!TextUtils.isEmpty(value)){
             try {
-                JSONObject object = new JSONObject(value);
-                JSONArray array = object.optJSONArray("data");
-                if(array != null&&array.length()>0){
-                    for (int i = 0; i < array.length(); i++) {
-                        JSONObject object1 = array.getJSONObject(i);
-                        String name = object1.optString("name");
-                        JSONArray array1 = object1.getJSONArray("keys");
-                        short[] datas = new short[array1.length()];
-                        for (int j = 0; j < array1.length(); j++) {
-                            String code = array1.getString(j);
+                KeyConfigHelper.ShortcutFile shortcutFile = KeyConfigHelper.parseShortcutFile(value);
+                if (shortcutFile != null && shortcutFile.data != null && !shortcutFile.data.isEmpty()) {
+                    List<KeyConfigHelper.Shortcut> data = shortcutFile.data;
+                    for (KeyConfigHelper.Shortcut sc : data) {
+                        List<String> keys = sc.keys;
+                        short[] keyCodes = new short[keys.size()];
+
+                        for (int i = 0; i < keys.size(); i++) {
+                            String code = keys.get(i);
                             int keycode;
-                            if (code.startsWith("0x")) {
+
+                            if (code.startsWith("0x")) {               // literal hex value
                                 keycode = Integer.parseInt(code.substring(2), 16);
-                            } else if (code.startsWith("VK_")) {
-                                Field vkCodeField = KeyMapper.class.getDeclaredField(code);
-                                keycode = vkCodeField.getInt(null);
-                            } else {
-                                throw new Exception("Unknown key code: " + code);
+                            } else if (code.startsWith("VK_")) {       // symbolic constant in KeyMapper
+                                Field field = KeyMapper.class.getDeclaredField(code);
+                                keycode = field.getInt(null);
+                            } else {                                   // unsupported
+                                throw new IllegalArgumentException("Unknown key code: " + code);
                             }
-                            datas[j] = (short) keycode;
+                            keyCodes[i] = (short) keycode;
                         }
-                        MenuOption option = new MenuOption(name, () -> sendKeys(datas));
+
+                        // Whatever MenuOption looks like in your project
+                        MenuOption option = new MenuOption(sc.name, () -> sendKeys(keyCodes));
                         options.add(option);
                     }
                 }
@@ -260,13 +242,11 @@ public class GameMenu implements Game.GameMenuCallbacks {
     }
 
     private void showAdvancedMenu(GameInputDevice device) {
-        List<MenuOption> options = new ArrayList<>();     
+        List<MenuOption> options = new ArrayList<>();
 
-        options.add(new MenuOption(getString(R.string.game_menu_hud), true,
-                game::toggleHUD));   
+        options.add(new MenuOption(getString(R.string.game_menu_toggle_hud), true, game::toggleHUD));
 
-        options.add(new MenuOption(getString(R.string.game_menu_switch_touch_sensitivity_model), true,
-                game::switchTouchSensitivity));
+        options.add(new MenuOption(getString(R.string.game_menu_switch_touch_sensitivity_model), true, game::switchTouchSensitivity));
 
         options.add(new MenuOption(getString(R.string.game_menu_upload_clipboard), true,
                 () -> game.sendClipboard(true)));
@@ -277,27 +257,25 @@ public class GameMenu implements Game.GameMenuCallbacks {
         options.add(new MenuOption(getString(R.string.game_menu_server_cmd), true,
                 () -> {
                     ArrayList<String> serverCmds = game.getServerCmds();
-
                     if (serverCmds.isEmpty()) {
-                        AlertDialog.Builder builder = new AlertDialog.Builder(game);
-                        builder.setTitle(R.string.game_dialog_title_server_cmd_empty);
-                        builder.setMessage(R.string.game_dialog_message_server_cmd_empty);
-
-                        AlertDialog dialog = builder.create();
-                        dialog.show();
+                        int themeResId = game.getApplicationInfo().theme;
+                        Context themedContext = new ContextThemeWrapper(dialogScreenContext, themeResId);
+                        new AlertDialog.Builder(themedContext)
+                                .setTitle(R.string.game_dialog_title_server_cmd_empty)
+                                .setMessage(R.string.game_dialog_message_server_cmd_empty)
+                                .show();
                     } else {
+                        hideMenu();
                         this.showServerCmd(serverCmds);
                     }
                 }));
 
-        options.add(new MenuOption(getString(R.string.game_menu_task_manager), true,
-                () -> sendKeys(new short[]{KeyboardTranslator.VK_LCONTROL, KeyboardTranslator.VK_LSHIFT, KeyboardTranslator.VK_ESCAPE})));
+        options.add(new MenuOption(getString(R.string.game_menu_task_manager), true, () -> sendKeys(new short[]{KeyboardTranslator.VK_LCONTROL, KeyboardTranslator.VK_LSHIFT, KeyboardTranslator.VK_ESCAPE})));
 
-        options.add(new MenuOption(getString(R.string.game_menu_send_keys), true, this::showSpecialKeysMenu));
-
-        if (device != null) {
-            options.addAll(device.getGameMenuOptions());
-        }
+        options.add(new MenuOption(getString(R.string.game_menu_send_keys), () -> {
+            hideMenu();
+            showSpecialKeysMenu();
+        }));
 
         options.add(new MenuOption(getString(R.string.game_menu_cancel), null));
 
@@ -323,43 +301,32 @@ public class GameMenu implements Game.GameMenuCallbacks {
 
         options.add(new MenuOption(getString(R.string.game_menu_disconnect), game::disconnect));
 
-        options.add(new MenuOption(getString(R.string.game_menu_quit_session), game::quit));
-
-        options.add(new MenuOption(getString(R.string.game_menu_upload_clipboard), true,
-                () -> game.sendClipboard(true)));
-
-        options.add(new MenuOption(getString(R.string.game_menu_fetch_clipboard), true,
-                () -> game.getClipboard(0)));
-
-        options.add(new MenuOption(getString(R.string.game_menu_server_cmd), true,
-                () -> {
-                    ArrayList<String> serverCmds = game.getServerCmds();
-                    if (serverCmds.isEmpty()) {
-                        int themeResId = game.getApplicationInfo().theme;
-                        Context themedContext = new ContextThemeWrapper(dialogScreenContext, themeResId);
-                        new AlertDialog.Builder(themedContext)
-                                .setTitle(R.string.game_dialog_title_server_cmd_empty)
-                                .setMessage(R.string.game_dialog_message_server_cmd_empty)
-                                .show();
-                    } else {
-                        hideMenu();
-                        this.showServerCmd(serverCmds);
-                    }
-                }));
-
-        options.add(new MenuOption(getString(R.string.game_menu_toggle_keyboard), true,
-                game::toggleKeyboard));
-
-        options.add(new MenuOption(getString(game.isZoomModeEnabled() ? R.string.game_menu_disable_zoom_mode : R.string.game_menu_enable_zoom_mode), true,
-                game::toggleZoomMode));
-
-        if (dialogScreenContext == game) {
-            options.add(new MenuOption(getString(R.string.game_menu_rotate_screen), true,
-                    game::rotateScreen));
+        if (!game.isOnExternalDisplay()) {
+            options.add(new MenuOption(getString(R.string.game_menu_toggle_virtual_model), true, game::toggleVirtualController));
         }
 
-        options.add(new MenuOption(getString(R.string.game_menu_advanced), true,
-                () -> showAdvancedMenu(device)));
+        options.add(new MenuOption(getString(R.string.game_menu_toggle_keyboard), true, game::toggleKeyboard));
+
+        options.add(new MenuOption(getString(R.string.game_menu_toggle_virtual_keyboard_model), true, game::toggleFullKeyboard));
+
+        options.add(new MenuOption(getString(R.string.game_menu_send_keys), () -> {
+            hideMenu();
+            showSpecialKeysMenu();
+        }));
+
+        if (game.allowChangeMouseMode) {
+            options.add(new MenuOption(getString(R.string.game_menu_select_mouse_mode), true, () -> game.selectMouseMode(dialogScreenContext)));
+        }
+
+        options.add(new MenuOption(getString(game.isZoomModeEnabled() ? R.string.game_menu_disable_zoom_mode : R.string.game_menu_enable_zoom_mode), true, game::toggleZoomMode));
+
+        if (dialogScreenContext == game) {
+            options.add(new MenuOption(getString(R.string.game_menu_rotate_screen), true, game::rotateScreen));
+        }
+
+        options.add(new MenuOption(getString(R.string.game_menu_advanced), true, () -> showAdvancedMenu(device)));
+
+        options.add(new MenuOption(getString(R.string.game_menu_quit_session), game::quit));
 
         options.add(new MenuOption(getString(R.string.game_menu_cancel), null));
 
