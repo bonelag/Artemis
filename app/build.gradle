@@ -54,7 +54,7 @@ android {
                 }
             }
 
-            applicationId "com.firecly"
+            applicationId "com.test"
             dimension "root"
             buildConfigField "boolean", "ROOT_BUILD", "false"
         }
