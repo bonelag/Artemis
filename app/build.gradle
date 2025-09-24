@@ -106,9 +106,9 @@ android {
         }
         release {
             applicationIdSuffix ".app"
-            resValue "string", "app_label", "FireCly"
-            resValue "string", "app_label_root", "FireCly (Root)"
-            resValue "string", "app_label_game", "FireCly (Game)"
+            resValue "string", "app_label", "Cynix"
+            resValue "string", "app_label_root", "Cynix (Root)"
+            resValue "string", "app_label_game", "Cynix (Game)"
 
             signingConfig signingConfigs.release
             minifyEnabled true
