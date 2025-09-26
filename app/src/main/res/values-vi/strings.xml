@@ -636,11 +636,10 @@
     <string name="menu_button">Menu</string>
 
     <!-- New Strings -->
-    <string name="summary_enable_commit_text">Chuyển tiếp văn bản nhiều ký tự từ bàn phím ảo (gõ vuốt, gợi ý, nhập giọng nói). Có thể gây lỗi với trò chơi yêu cầu nhập từng phím.</string>
+<string name="summary_enable_commit_text">Chuyển tiếp văn bản nhiều ký tự từ bàn phím ảo (gõ vuốt, gợi ý, nhập giọng nói). Có thể gây lỗi với trò chơi yêu cầu nhập từng phím.</string>
     <string name="title_enable_commit_text">Bật nhập văn bản (vuốt/giọng nói)</string>
     <string name="title_checkbox_remember_zoom_pan">Ghi nhớ Thu phóng &amp; Di chuyển</string>
     <string name="summary_checkbox_remember_zoom_pan">Lưu các thay đổi về vị trí thu phóng và di chuyển giữa các phiên</string>
-    <string name="title_checkbox_enable_perf_overlay_bottom">Di chuyển lớp phủ xuống dưới</string>
     <string name="summary_checkbox_enable_perf_overlay_bottom">Hữu ích khi bật Hiển thị ở Trung tâm Trên cùng và chế độ Lite trong quá trình phát trực tuyến ở độ phân giải không phải gốc.</string>
     <string name="title_edit_profile">Chỉnh sửa Hồ sơ</string>
     <string name="profile_manager_new_profile">Hồ sơ mới</string>
