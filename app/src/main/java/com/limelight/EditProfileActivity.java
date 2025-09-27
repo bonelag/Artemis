@@ -20,9 +20,6 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.preference.Preference;
 import androidx.preference.PreferenceGroup;
 import androidx.preference.PreferenceManager;
-
-import com.bytehamster.lib.preferencesearch.SearchPreferenceResult;
-import com.bytehamster.lib.preferencesearch.SearchPreferenceResultListener;
 import com.limelight.preferences.PreferenceConfiguration;
 import com.limelight.preferences.StreamSettings;
 import com.limelight.profiles.ProfilesManager;
@@ -36,7 +33,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
-public class EditProfileActivity extends AppCompatActivity implements SearchPreferenceResultListener {
+public class EditProfileActivity extends AppCompatActivity {
     private String profileUuid;
     private SettingsProfile currentProfile;
     private InMemorySharedPreferences inMemoryPrefs;
@@ -115,12 +112,6 @@ public class EditProfileActivity extends AppCompatActivity implements SearchPref
         }
 
         return super.onOptionsItemSelected(item);
-    }
-
-    @Override
-    public void onSearchResultClicked(SearchPreferenceResult result) {
-        result.closeSearchPage(this);
-        result.highlight(prefsFragment);
     }
 
     void reloadSettings() {

@@ -25,13 +25,12 @@ import androidx.preference.ListPreference;
 import androidx.preference.Preference;
 import androidx.preference.PreferenceCategory;
 import androidx.preference.PreferenceFragmentCompat;
+import androidx.preference.PreferenceGroup;
 import androidx.preference.PreferenceManager;
 import androidx.preference.PreferenceScreen;
 
-import com.bytehamster.lib.preferencesearch.SearchConfiguration;
-import com.bytehamster.lib.preferencesearch.SearchPreferenceResult;
-import com.bytehamster.lib.preferencesearch.SearchPreference;
-import com.bytehamster.lib.preferencesearch.SearchPreferenceResultListener;
+import com.limelight.preferences.InlineSearchDialogFragment;
+import com.limelight.preferences.InlineSearchPreference;
 import android.text.InputFilter;
 import android.text.InputType;
 import android.text.TextUtils;
@@ -66,11 +65,13 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Iterator;
 import java.util.Map;
 
-public class StreamSettings extends AppCompatActivity implements SearchPreferenceResultListener {
+public class StreamSettings extends AppCompatActivity {
     private PreferenceConfiguration previousPrefs;
     private int previousDisplayPixelCount;
 
@@ -91,12 +92,6 @@ public class StreamSettings extends AppCompatActivity implements SearchPreferenc
         getSupportFragmentManager().beginTransaction().replace(
                 R.id.stream_settings, prefsFragment
         ).commitAllowingStateLoss();
-    }
-
-    @Override
-    public void onSearchResultClicked(SearchPreferenceResult result) {
-        result.closeSearchPage(this);
-        result.highlight(prefsFragment);
     }
 
     @Override
@@ -172,7 +167,7 @@ public class StreamSettings extends AppCompatActivity implements SearchPreferenc
         }
     }
 
-    public static class SettingsFragment extends PreferenceFragmentCompat {
+    public static class SettingsFragment extends PreferenceFragmentCompat implements InlineSearchDialogFragment.SearchHost {
         private int nativeResolutionStartIndex = Integer.MAX_VALUE;
         private boolean nativeFramerateShown = false;
 
@@ -184,6 +179,34 @@ public class StreamSettings extends AppCompatActivity implements SearchPreferenc
 
         protected SharedPreferences getPrefs() {
             return getPreferenceManager().getSharedPreferences();
+        }
+
+        @NonNull
+        @Override
+        public List<Preference> collectSearchablePreferences() {
+            List<Preference> result = new ArrayList<>();
+            PreferenceScreen screen = getPreferenceScreen();
+            if (screen != null) {
+                collectPreferences(screen, result);
+            }
+            return result;
+        }
+
+        private void collectPreferences(@NonNull PreferenceGroup group, @NonNull List<Preference> out) {
+            for (int i = 0; i < group.getPreferenceCount(); i++) {
+                Preference preference = group.getPreference(i);
+                if (preference == null || !preference.isVisible()) {
+                    continue;
+                }
+                if (preference instanceof InlineSearchPreference) {
+                    continue;
+                }
+                if (preference instanceof PreferenceGroup) {
+                    collectPreferences((PreferenceGroup) preference, out);
+                } else {
+                    out.add(preference);
+                }
+            }
         }
 
         private void setValue(String preferenceKey, String value) {
@@ -342,11 +365,10 @@ public class StreamSettings extends AppCompatActivity implements SearchPreferenc
         public void onCreatePreferences(Bundle bundle, String s) {
             initializePreferences();
 
-            SearchPreference searchPreference = findPreference("searchPreference");
-            assert searchPreference != null;
-            SearchConfiguration config = searchPreference.getSearchConfiguration();
-            config.setActivity((AppCompatActivity) requireActivity());
-            config.index(R.xml.preferences);
+            InlineSearchPreference searchPreference = findPreference("searchPreference");
+            if (searchPreference != null) {
+                searchPreference.attachToFragment(this);
+            }
         }
 
         public void initializePreferences() {
