@@ -219,10 +219,6 @@ public class InlineSearchDialogFragment extends DialogFragment {
         if (!TextUtils.isEmpty(summary) && summary.toString().toLowerCase(Locale.ROOT).contains(lowerQuery)) {
             return true;
         }
-        CharSequence contentDescription = preference.getContentDescription();
-        if (!TextUtils.isEmpty(contentDescription) && contentDescription.toString().toLowerCase(Locale.ROOT).contains(lowerQuery)) {
-            return true;
-        }
         String key = preference.getKey();
         if (!TextUtils.isEmpty(key) && key.toLowerCase(Locale.ROOT).contains(lowerQuery)) {
             return true;
