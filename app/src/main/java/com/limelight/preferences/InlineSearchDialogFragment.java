@@ -235,6 +235,7 @@ public class InlineSearchDialogFragment extends DialogFragment {
             holder.itemView.setEnabled(selectable);
             holder.itemView.setAlpha(selectable ? 1f : 0.4f);
 
+            holder.actionContainer.setVisibility(View.VISIBLE);
             if (pref instanceof TwoStatePreference) {
                 holder.switchCompat.setVisibility(View.VISIBLE);
                 holder.editButton.setVisibility(View.GONE);
@@ -287,6 +288,10 @@ public class InlineSearchDialogFragment extends DialogFragment {
                     bindDefaultPreference(holder, pref, selectable);
                 }
             }
+
+            if (holder.switchCompat.getVisibility() == View.GONE && holder.editButton.getVisibility() == View.GONE) {
+                holder.actionContainer.setVisibility(View.GONE);
+            }
         }
 
         @Override
@@ -298,6 +303,7 @@ public class InlineSearchDialogFragment extends DialogFragment {
             final TextView title;
             final TextView summary;
             final TextView breadcrumb;
+            final View actionContainer;
             final SwitchCompat switchCompat;
             final MaterialButton editButton;
 
@@ -306,6 +312,7 @@ public class InlineSearchDialogFragment extends DialogFragment {
                 title = itemView.findViewById(R.id.resultTitle);
                 summary = itemView.findViewById(R.id.resultSummary);
                 breadcrumb = itemView.findViewById(R.id.resultBreadcrumb);
+                actionContainer = itemView.findViewById(R.id.resultActionContainer);
                 switchCompat = itemView.findViewById(R.id.resultSwitch);
                 editButton = itemView.findViewById(R.id.resultEdit);
             }
