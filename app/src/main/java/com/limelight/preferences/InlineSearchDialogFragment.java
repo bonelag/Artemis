@@ -332,7 +332,7 @@ public class InlineSearchDialogFragment extends DialogFragment {
                 return;
             }
             View.OnClickListener clickListener = v -> {
-                int adapterPosition = holder.getBindingAdapterPosition();
+                int adapterPosition = holder.getAdapterPosition();
                 if (adapterPosition == RecyclerView.NO_POSITION) {
                     return;
                 }
@@ -354,7 +354,7 @@ public class InlineSearchDialogFragment extends DialogFragment {
                 return;
             }
             View.OnClickListener clickListener = v -> {
-                int adapterPosition = holder.getBindingAdapterPosition();
+                int adapterPosition = holder.getAdapterPosition();
                 if (adapterPosition == RecyclerView.NO_POSITION) {
                     return;
                 }
@@ -410,7 +410,7 @@ public class InlineSearchDialogFragment extends DialogFragment {
                 input.setText(text);
                 Editable editable = input.getText();
                 if (editable != null) {
-                    editable.setSelection(editable.length());
+                    input.setSelection(editable.length());
                 }
             }
 
