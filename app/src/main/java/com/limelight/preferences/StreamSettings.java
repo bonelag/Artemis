@@ -1021,6 +1021,7 @@ public class StreamSettings extends AppCompatActivity {
             rebuildSearchIndex();
 
             InlineSearchDialogFragment dialog = InlineSearchDialogFragment.newInstance();
+            dialog.setHost(this);
             dialog.setTargetFragment(this, 0);
             dialog.show(getParentFragmentManager(), InlineSearchDialogFragment.TAG);
         }

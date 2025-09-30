@@ -50,6 +50,10 @@ public class InlineSearchDialogFragment extends DialogFragment {
         return new InlineSearchDialogFragment();
     }
 
+    public void setHost(@NonNull StreamSettings.SettingsFragment host) {
+        this.host = host;
+    }
+
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -59,9 +63,21 @@ public class InlineSearchDialogFragment extends DialogFragment {
     @Override
     public void onAttach(@NonNull Context context) {
         super.onAttach(context);
-        Fragment target = getTargetFragment();
-        if (target instanceof StreamSettings.SettingsFragment) {
-            host = (StreamSettings.SettingsFragment) target;
+        if (host == null) {
+            Fragment target = getTargetFragment();
+            if (target instanceof StreamSettings.SettingsFragment) {
+                host = (StreamSettings.SettingsFragment) target;
+            }
+        }
+
+        if (host == null) {
+            Fragment parent = getParentFragment();
+            if (parent instanceof StreamSettings.SettingsFragment) {
+                host = (StreamSettings.SettingsFragment) parent;
+            }
+        }
+
+        if (host != null) {
             host.registerInlineSearchDialog(this);
         } else {
             throw new IllegalStateException("InlineSearchDialogFragment requires SettingsFragment host");
