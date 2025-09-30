@@ -21,10 +21,13 @@ import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.preference.EditTextPreference;
+import androidx.preference.ListPreference;
 import androidx.preference.Preference;
 import androidx.preference.TwoStatePreference;
 
 import com.google.android.material.button.MaterialButton;
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.textfield.TextInputEditText;
 import com.limelight.R;
 
@@ -265,18 +268,24 @@ public class InlineSearchDialogFragment extends DialogFragment {
                 holder.switchCompat.setOnCheckedChangeListener(listener);
             } else {
                 holder.switchCompat.setVisibility(View.GONE);
+                holder.switchCompat.setOnCheckedChangeListener(null);
                 holder.editButton.setVisibility(View.VISIBLE);
                 holder.editButton.setEnabled(selectable);
-                holder.editButton.setOnClickListener(v -> {
-                    if (selectable) {
-                        host.performInlinePreferenceClick(pref);
-                    }
-                });
-                holder.itemView.setOnClickListener(v -> {
-                    if (selectable) {
-                        host.performInlinePreferenceClick(pref);
-                    }
-                });
+                holder.itemView.setOnClickListener(null);
+                holder.editButton.setOnClickListener(null);
+
+                if (pref instanceof ListPreference) {
+                    bindListPreference(holder, (ListPreference) pref, selectable);
+                }
+                else if (pref instanceof EditTextPreference) {
+                    bindEditTextPreference(holder, (EditTextPreference) pref, selectable);
+                }
+                else if (pref instanceof SeekBarPreference) {
+                    bindSeekBarPreference(holder, (SeekBarPreference) pref, selectable);
+                }
+                else {
+                    bindDefaultPreference(holder, pref, selectable);
+                }
             }
         }
 
@@ -300,6 +309,124 @@ public class InlineSearchDialogFragment extends DialogFragment {
                 switchCompat = itemView.findViewById(R.id.resultSwitch);
                 editButton = itemView.findViewById(R.id.resultEdit);
             }
+        }
+
+        private void bindDefaultPreference(@NonNull ViewHolder holder, @NonNull Preference pref, boolean selectable) {
+            holder.editButton.setText(R.string.search_settings_open);
+            if (!selectable) {
+                holder.itemView.setOnClickListener(null);
+                holder.editButton.setOnClickListener(null);
+                return;
+            }
+            View.OnClickListener clickListener = v -> host.performInlinePreferenceClick(pref);
+            holder.itemView.setOnClickListener(clickListener);
+            holder.editButton.setOnClickListener(clickListener);
+        }
+
+        private void bindListPreference(@NonNull ViewHolder holder, @NonNull ListPreference pref, boolean selectable) {
+            CharSequence currentEntry = pref.getEntry();
+            holder.editButton.setText(currentEntry == null ? getString(R.string.search_settings_select) : currentEntry);
+            if (!selectable) {
+                holder.itemView.setOnClickListener(null);
+                holder.editButton.setOnClickListener(null);
+                return;
+            }
+            View.OnClickListener clickListener = v -> {
+                int adapterPosition = holder.getBindingAdapterPosition();
+                if (adapterPosition == RecyclerView.NO_POSITION) {
+                    return;
+                }
+                showListSelectionDialog(pref, adapterPosition);
+            };
+            holder.itemView.setOnClickListener(clickListener);
+            holder.editButton.setOnClickListener(clickListener);
+        }
+
+        private void bindEditTextPreference(@NonNull ViewHolder holder, @NonNull EditTextPreference pref, boolean selectable) {
+            CharSequence display = pref.getText();
+            if (TextUtils.isEmpty(display)) {
+                display = getString(R.string.search_settings_edit);
+            }
+            holder.editButton.setText(display);
+            if (!selectable) {
+                holder.itemView.setOnClickListener(null);
+                holder.editButton.setOnClickListener(null);
+                return;
+            }
+            View.OnClickListener clickListener = v -> {
+                int adapterPosition = holder.getBindingAdapterPosition();
+                if (adapterPosition == RecyclerView.NO_POSITION) {
+                    return;
+                }
+                showEditTextDialog(pref, adapterPosition);
+            };
+            holder.itemView.setOnClickListener(clickListener);
+            holder.editButton.setOnClickListener(clickListener);
+        }
+
+        private void bindSeekBarPreference(@NonNull ViewHolder holder, @NonNull SeekBarPreference pref, boolean selectable) {
+            holder.editButton.setText(pref.getSummary());
+            if (!selectable) {
+                holder.itemView.setOnClickListener(null);
+                holder.editButton.setOnClickListener(null);
+                return;
+            }
+            View.OnClickListener clickListener = v -> {
+                pref.showDialog();
+            };
+            holder.itemView.setOnClickListener(clickListener);
+            holder.editButton.setOnClickListener(clickListener);
+        }
+
+        private void showListSelectionDialog(@NonNull ListPreference pref, int position) {
+            CharSequence[] entries = pref.getEntries();
+            CharSequence[] values = pref.getEntryValues();
+            if (entries == null || values == null || entries.length != values.length) {
+                host.performInlinePreferenceClick(pref);
+                return;
+            }
+
+            int selected = pref.findIndexOfValue(pref.getValue());
+
+            new MaterialAlertDialogBuilder(requireContext())
+                    .setTitle(pref.getTitle())
+                    .setSingleChoiceItems(entries, selected, (dialog, which) -> {
+                        String newValue = values[which].toString();
+                        if (pref.callChangeListener(newValue)) {
+                            pref.setValue(newValue);
+                            notifyItemChanged(position);
+                        }
+                        dialog.dismiss();
+                    })
+                    .setNegativeButton(R.string.cancel, null)
+                    .show();
+        }
+
+        private void showEditTextDialog(@NonNull EditTextPreference pref, int position) {
+            View view = LayoutInflater.from(requireContext()).inflate(R.layout.dialog_inline_edit_text, null, false);
+            TextInputEditText input = view.findViewById(R.id.inlineEditTextValue);
+            CharSequence text = pref.getText();
+            if (!TextUtils.isEmpty(text)) {
+                input.setText(text);
+                Editable editable = input.getText();
+                if (editable != null) {
+                    editable.setSelection(editable.length());
+                }
+            }
+
+            new MaterialAlertDialogBuilder(requireContext())
+                    .setTitle(pref.getTitle())
+                    .setView(view)
+                    .setPositiveButton(android.R.string.ok, (dialog, which) -> {
+                        CharSequence newValue = input.getText();
+                        String value = newValue == null ? "" : newValue.toString();
+                        if (pref.callChangeListener(value)) {
+                            pref.setText(value);
+                            notifyItemChanged(position);
+                        }
+                    })
+                    .setNegativeButton(R.string.cancel, null)
+                    .show();
         }
     }
 
