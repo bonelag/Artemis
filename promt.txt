@@ -32,3 +32,56 @@ Yêu cầu khi sửa code:
 - Chỉ thay đổi **thứ tự addItem()** trong back menu và submenu.
 - Không làm mất các điều kiện hiển thị (ví dụ: chỉ hiển thị Rotate nếu context = game).
 - Xuất code sau khi chỉnh sửa, không giải thích thêm.
+
+
+
+
+
+Bạn là một trợ lý lập trình Android cấp cao.
+
+Nhiệm vụ khởi đầu:
+1. Đọc toàn bộ dự án Android mình cung cấp (bao gồm Gradle, Manifest, source code Java/Kotlin, XML layout, resource).
+2. Phân tích và ghi chú lại:
+   - Tên package chính và entry point (ví dụ MainActivity, Application).
+   - Kiến trúc dự án (MVC, MVVM, Clean Architecture... nếu có).
+   - Các Activity/Fragment/Composable quan trọng.
+   - Các file layout chính liên kết với logic.
+   - Thư viện và dependency trong build.gradle.
+   - Cách dữ liệu/setting đang được quản lý.
+3. Cho biết dự án này là về cái gì, ứng dụng có tác dụng gì (dựa trên code, package, layout, resource).
+4. Giữ nguyên coding style và convention hiện tại.
+5. Không đề xuất thay đổi hoặc tối ưu gì ở bước này.
+
+Kết quả mong đợi:
+- Tóm tắt dự án: app này dùng để làm gì, phục vụ mục đích nào.
+- Tóm tắt kiến trúc dự án, luồng hoạt động chính, và cách các thành phần liên kết với nhau.
+- Liệt kê các file quan trọng (tên + chức năng).
+- Sau bước này, bạn sẽ ở trạng thái "đã hiểu dự án" và sẵn sàng thực hiện mọi task chỉnh sửa hoặc thêm tính năng mà mình yêu cầu.
+
+Trả lời bằng tiếng Việt, súc tích nhưng đủ chi tiết.
+
+
+
+
+
+
+
+Dựa trên kiến trúc dự án đã phân tích, hãy thực hiện yêu cầu sau:
+
+Yêu cầu tính năng:
+- Khôi phục thanh search bar và danh sách kết quả setting như ban đầu.
+- Khi người dùng nhập từ khóa, list hiển thị kết quả vẫn xuất hiện bình thường.
+- Thay đổi duy nhất: trong list kết quả, cho phép người dùng trực tiếp tương tác và chỉnh sửa (ví dụ bật/tắt switch, thay đổi giá trị) ngay tại item hiển thị,
+  thay vì phải nhấn và jump tới màn hình setting gốc.
+
+Yêu cầu output:
+1. Không cần đưa toàn bộ code đầy đủ.
+2. Chỉ cần giải thích chi tiết:
+   - Những file nào đã được chỉnh sửa.
+   - Thêm/bỏ logic gì trong các file đó.
+   - Nếu có thay đổi layout, mô tả thay đổi cụ thể.
+   - Cách dữ liệu được cập nhật ngay khi chỉnh sửa trong list.
+3. Giữ coding style và convention gốc của dự án.
+4. Chỉ viết code mẫu minh họa phần cần thay đổi, không cần build thử.
+5. Nếu cần thư viện ngoài, hãy ghi rõ dependency cần import trong build.gradle.
+6. Trả lời bằng tiếng Việt.

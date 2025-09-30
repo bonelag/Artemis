@@ -25,8 +25,10 @@ import androidx.preference.ListPreference;
 import androidx.preference.Preference;
 import androidx.preference.PreferenceCategory;
 import androidx.preference.PreferenceFragmentCompat;
+import androidx.preference.PreferenceGroup;
 import androidx.preference.PreferenceManager;
 import androidx.preference.PreferenceScreen;
+import androidx.preference.TwoStatePreference;
 
 import com.bytehamster.lib.preferencesearch.SearchConfiguration;
 import com.bytehamster.lib.preferencesearch.SearchPreferenceResult;
@@ -66,8 +68,13 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayDeque;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Deque;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 
 public class StreamSettings extends AppCompatActivity implements SearchPreferenceResultListener {
@@ -177,6 +184,16 @@ public class StreamSettings extends AppCompatActivity implements SearchPreferenc
         private boolean nativeFramerateShown = false;
 
         private PreferenceConfiguration prevPrefConfig;
+
+        private InlineSearchDialogFragment inlineSearchDialog;
+        private final List<InlineSearchDialogFragment.SearchCandidate> searchCandidates = new ArrayList<>();
+        private final Map<String, InlineSearchDialogFragment.SearchCandidate> searchCandidateByKey = new LinkedHashMap<>();
+        private final SharedPreferences.OnSharedPreferenceChangeListener prefChangeListener =
+                (sharedPreferences, key) -> {
+                    if (inlineSearchDialog != null) {
+                        inlineSearchDialog.onPreferenceValueChanged(key);
+                    }
+                };
 
         public SettingsFragment(PreferenceConfiguration prefCfg) {
             prevPrefConfig = prefCfg;
@@ -347,6 +364,23 @@ public class StreamSettings extends AppCompatActivity implements SearchPreferenc
             SearchConfiguration config = searchPreference.getSearchConfiguration();
             config.setActivity((AppCompatActivity) requireActivity());
             config.index(R.xml.preferences);
+
+            searchPreference.setOnPreferenceClickListener(preference -> {
+                showInlineSearchDialog();
+                return true;
+            });
+        }
+
+        @Override
+        public void onResume() {
+            super.onResume();
+            getPrefs().registerOnSharedPreferenceChangeListener(prefChangeListener);
+        }
+
+        @Override
+        public void onPause() {
+            getPrefs().unregisterOnSharedPreferenceChangeListener(prefChangeListener);
+            super.onPause();
         }
 
         public void initializePreferences() {
@@ -973,6 +1007,8 @@ public class StreamSettings extends AppCompatActivity implements SearchPreferenc
                     }
                 });
             }
+
+            rebuildSearchIndex();
         }
 
         private void removeEntryFromListAndSetValue(String resolutionPrefString, String entryToRemove, String nextDefault) {
@@ -991,6 +1027,98 @@ public class StreamSettings extends AppCompatActivity implements SearchPreferenc
             prefs.edit().putString(prefKey, newVal).apply();
 
             reloadSettings();
+        }
+
+        private void showInlineSearchDialog() {
+            if (inlineSearchDialog != null && inlineSearchDialog.isAdded()) {
+                return;
+            }
+
+            rebuildSearchIndex();
+
+            InlineSearchDialogFragment dialog = InlineSearchDialogFragment.newInstance();
+            dialog.setTargetFragment(this, 0);
+            dialog.show(getParentFragmentManager(), InlineSearchDialogFragment.TAG);
+        }
+
+        void registerInlineSearchDialog(@NonNull InlineSearchDialogFragment dialog) {
+            inlineSearchDialog = dialog;
+        }
+
+        void unregisterInlineSearchDialog(@NonNull InlineSearchDialogFragment dialog) {
+            if (inlineSearchDialog == dialog) {
+                inlineSearchDialog = null;
+            }
+        }
+
+        List<InlineSearchDialogFragment.SearchCandidate> getSearchCandidates() {
+            rebuildSearchIndex();
+            return new ArrayList<>(searchCandidates);
+        }
+
+        InlineSearchDialogFragment.SearchCandidate getSearchCandidate(String key) {
+            return searchCandidateByKey.get(key);
+        }
+
+        void performInlinePreferenceClick(@NonNull Preference preference) {
+            if (!preference.isEnabled()) {
+                return;
+            }
+            preference.performClick();
+        }
+
+        private void rebuildSearchIndex() {
+            searchCandidates.clear();
+            searchCandidateByKey.clear();
+
+            PreferenceScreen screen = getPreferenceScreen();
+            if (screen == null) {
+                return;
+            }
+
+            Deque<String> breadcrumb = new ArrayDeque<>();
+            collectPreferenceGroup(screen, breadcrumb);
+        }
+
+        private void collectPreferenceGroup(@NonNull PreferenceGroup group, @NonNull Deque<String> breadcrumb) {
+            boolean pushed = false;
+            if (!(group instanceof PreferenceScreen)) {
+                CharSequence groupTitle = group.getTitle();
+                if (!TextUtils.isEmpty(groupTitle)) {
+                    breadcrumb.addLast(groupTitle.toString());
+                    pushed = true;
+                }
+            }
+
+            for (int i = 0; i < group.getPreferenceCount(); i++) {
+                Preference child = group.getPreference(i);
+                if (child == null || !child.isVisible()) {
+                    continue;
+                }
+
+                if (child instanceof PreferenceGroup) {
+                    collectPreferenceGroup((PreferenceGroup) child, breadcrumb);
+                }
+                else {
+                    addSearchCandidate(child, breadcrumb);
+                }
+            }
+
+            if (pushed && !breadcrumb.isEmpty()) {
+                breadcrumb.removeLast();
+            }
+        }
+
+        private void addSearchCandidate(@NonNull Preference preference, @NonNull Deque<String> breadcrumb) {
+            String key = preference.getKey();
+            if (TextUtils.isEmpty(key) || "searchPreference".equals(key)) {
+                return;
+            }
+
+            InlineSearchDialogFragment.SearchCandidate candidate =
+                    new InlineSearchDialogFragment.SearchCandidate(preference, breadcrumb);
+            searchCandidates.add(candidate);
+            searchCandidateByKey.put(key, candidate);
         }
 
         protected void reloadSettings() {
