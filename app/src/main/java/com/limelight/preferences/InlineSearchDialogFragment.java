@@ -50,7 +50,7 @@ public class InlineSearchDialogFragment extends DialogFragment {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setStyle(STYLE_NORMAL, R.style.ThemeOverlay_MaterialComponents_MaterialAlertDialog);
+    setStyle(STYLE_NORMAL, R.style.ThemeOverlay_Cynix_SettingsSearchDialog);
     }
 
     @Override
