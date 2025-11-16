@@ -209,9 +209,9 @@ static void decodeInputData(PQUEUED_AUDIO_PACKET packet) {
             // Opus header should stay constant for the entire stream.
             // If it doesn't, it may indicate that the RtpAudioQueue
             // incorrectly recovered a data shard or the decryption
-            // of the audio packet failed. Sunshine violates this for
+            // of the audio packet failed. Cynix violates this for
             // surround sound in some cases, so just ignore it.
-            LC_ASSERT_VT(decryptedOpusData[0] == opusHeaderByte || IS_SUNSHINE());
+            LC_ASSERT_VT(decryptedOpusData[0] == opusHeaderByte || IS_CYNIX());
         }
 #endif
 

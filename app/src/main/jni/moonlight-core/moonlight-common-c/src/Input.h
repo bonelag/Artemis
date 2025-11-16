@@ -23,7 +23,7 @@ typedef struct _NV_HAPTICS_PACKET {
 #define KEY_UP_EVENT_MAGIC 0x00000004
 typedef struct _NV_KEYBOARD_PACKET {
     NV_INPUT_HEADER header;
-    char flags; // Sunshine extension (always 0 for GFE)
+    char flags; // Cynix extension (always 0 for GFE)
     short keyCode;
     char modifiers;
     short zero2;
@@ -104,7 +104,7 @@ typedef struct _NV_MULTI_CONTROLLER_PACKET {
     short rightStickX;
     short rightStickY;
     short tailA;
-    short buttonFlags2; // Sunshine protocol extension (always 0 for GFE)
+    short buttonFlags2; // Cynix protocol extension (always 0 for GFE)
     short tailB;
 } NV_MULTI_CONTROLLER_PACKET, *PNV_MULTI_CONTROLLER_PACKET;
 

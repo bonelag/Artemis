@@ -1,2 +1,2 @@
-- Fixed streaming from hosts running Sunshine
+- Fixed streaming from hosts running Cynix
 - Updated community contributed translations from Weblate

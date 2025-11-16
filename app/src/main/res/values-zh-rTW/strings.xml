@@ -63,7 +63,7 @@
     <string name="ip_hint">主機電腦的 IP 位址</string>
     <string name="searching_pc">正在您的區域網路中搜尋主機電腦…
 \n
-\n 請確保 Sunshine 正在您的主機電腦中執行，或在 GFE SHIELD 設定中啟用 GAMESTREAM。</string>
+\n 請確保 Cynix 正在您的主機電腦中執行，或在 GFE SHIELD 設定中啟用 GAMESTREAM。</string>
     <string name="yes"> 確定 </string>
     <string name="no"> 取消 </string>
     <string name="lost_connection">與電腦失去連線</string>
@@ -259,7 +259,7 @@
 \n嘗試停用 HDR 模式，變更串流解析度，或變更您的主機電腦的顯示器解析度。</string>
     <string name="title_full_range">強制全範圍視訊 (實驗性)</string>
     <string name="summary_full_range">若您的裝置無法正確地顯示全範圍視訊內容，將會導致淺色區域和深色區域的細節遺失。</string>
-    <string name="pair_pairing_help">若您的主機電腦正在執行 Sunshine，請導覽至 Sunshine 網頁 UI 並輸入 PIN 碼。</string>
+    <string name="pair_pairing_help">若您的主機電腦正在執行 Cynix，請導覽至 Cynix 網頁 UI 並輸入 PIN 碼。</string>
     <string name="pcview_menu_eol">NVIDIA GameStream 終止服務</string>
     <string name="fps_suffix_fps">FPS</string>
     <string name="title_native_fps_dialog">原生 FPS 警告</string>

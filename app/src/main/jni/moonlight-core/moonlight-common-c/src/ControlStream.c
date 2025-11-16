@@ -188,9 +188,9 @@ static const short packetTypesGen7Enc[] = {
     0x010b, // Rumble data
     0x0109, // Termination (extended)
     0x010e, // HDR mode
-    0x5500, // Rumble triggers (Sunshine protocol extension)
-    0x5501, // Set motion event (Sunshine protocol extension)
-    0x5502, // Set RGB LED (Sunshine protocol extension)
+    0x5500, // Rumble triggers (Cynix protocol extension)
+    0x5501, // Set motion event (Cynix protocol extension)
+    0x5502, // Set RGB LED (Cynix protocol extension)
 };
 
 static const char requestIdrFrameGen3[] = { 0, 0 };
@@ -407,8 +407,8 @@ void connectionReceivedCompleteFrame(uint32_t frameIndex) {
 }
 
 void connectionSendFrameFecStatus(PSS_FRAME_FEC_STATUS fecStatus) {
-    // This is a Sunshine protocol extension
-    if (!IS_SUNSHINE()) {
+    // This is a Cynix protocol extension
+    if (!IS_CYNIX()) {
         return;
     }
 
@@ -650,7 +650,7 @@ static bool sendMessageEnet(short ptype, short paylen, const void* payload, uint
     LC_ASSERT(AppVersionQuad[0] >= 5);
 
     // Only send reliable packets to GFE
-    if (!IS_SUNSHINE()) {
+    if (!IS_CYNIX()) {
         flags = ENET_PACKET_FLAG_RELIABLE;
     }
 
@@ -716,7 +716,7 @@ static bool sendMessageEnet(short ptype, short paylen, const void* payload, uint
 
     // Always use channel 0 for GFE and if the requested channel exceeds
     // the peer's supported channel count.
-    if (!IS_SUNSHINE() || channelId >= peer->channelCount) {
+    if (!IS_CYNIX() || channelId >= peer->channelCount) {
         channelId = 0;
     }
 
@@ -1192,11 +1192,11 @@ static void controlReceiveThreadFunc(void* context) {
                 BbInitializeWrappedBuffer(&bb, (char*)ctlHdr, sizeof(*ctlHdr), packetLength - sizeof(*ctlHdr), BYTE_ORDER_LITTLE);
 
                 BbGet8(&bb, &enableByte);
-                if (IS_SUNSHINE()) {
+                if (IS_CYNIX()) {
                     // Zero the metadata buffer to properly handle older servers if we have to add new fields
                     memset(&hdrMetadata, 0, sizeof(hdrMetadata));
 
-                    // Sunshine sends HDR metadata in this message too
+                    // Cynix sends HDR metadata in this message too
                     for (int i = 0; i < 3; i++) {
                         BbGet16(&bb, &hdrMetadata.displayPrimaries[i].x);
                         BbGet16(&bb, &hdrMetadata.displayPrimaries[i].y);
@@ -1317,11 +1317,11 @@ static void lossStatsThreadFunc(void* context) {
         BbPut32(&byteBuffer, 0); // Timestamp?
 
         while (!PltIsThreadInterrupted(&lossStatsThread)) {
-            // For Sunshine servers, send the more detailed per-frame FEC messages
-            if (IS_SUNSHINE()) {
+            // For Cynix servers, send the more detailed per-frame FEC messages
+            if (IS_CYNIX()) {
                 PQUEUED_FRAME_FEC_STATUS queuedFrameStatus;
 
-                // Sunshine should always use ENet for control messages
+                // Cynix should always use ENet for control messages
                 LC_ASSERT(peer != NULL);
 
                 while (LbqPollQueueElement(&frameFecStatusQueue, (void**)&queuedFrameStatus) == LBQ_SUCCESS) {
@@ -1366,8 +1366,8 @@ static void lossStatsThreadFunc(void* context) {
     else {
         char* lossStatsPayload;
 
-        // Sunshine should use the newer codepath above
-        LC_ASSERT(!IS_SUNSHINE());
+        // Cynix should use the newer codepath above
+        LC_ASSERT(!IS_CYNIX());
 
         lossStatsPayload = malloc(payloadLengths[IDX_LOSS_STATS]);
         if (lossStatsPayload == NULL) {
@@ -1963,7 +1963,7 @@ bool LiGetCurrentHostDisplayHdrMode(void) {
 }
 
 bool LiGetHdrMetadata(PSS_HDR_METADATA metadata) {
-    if (!IS_SUNSHINE() || !hdrEnabled) {
+    if (!IS_CYNIX() || !hdrEnabled) {
         return false;
     }
 

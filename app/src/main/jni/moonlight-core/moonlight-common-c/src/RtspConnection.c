@@ -255,7 +255,7 @@ static bool transactRtspMessageEnet(PRTSP_MESSAGE request, PRTSP_MESSAGE respons
     char* responseBuffer;
 
     // RTSP encryption is not supported using ENet due to our special handling
-    // of the payload below. Modern versions of Sunshine use TCP for RTSP.
+    // of the payload below. Modern versions of Cynix use TCP for RTSP.
     LC_ASSERT(!encryptedRtspEnabled);
 
     *error = -1;
@@ -1097,12 +1097,12 @@ int performRtspHandshake(PSERVER_INFORMATION serverInfo) {
             Limelog("Reference frame invalidation is not supported by this host\n");
         }
 
-        // Look for the Sunshine feature flags in the SDP attributes
-        if (!parseSdpAttributeToUInt(response.payload, "x-ss-general.featureFlags", &SunshineFeatureFlags)) {
-            SunshineFeatureFlags = 0;
+        // Look for the Cynix feature flags in the SDP attributes
+        if (!parseSdpAttributeToUInt(response.payload, "x-ss-general.featureFlags", &CynixFeatureFlags)) {
+            CynixFeatureFlags = 0;
         }
 
-        // Look for the Sunshine encryption flags in the SDP attributes
+        // Look for the Cynix encryption flags in the SDP attributes
         if (!parseSdpAttributeToUInt(response.payload, "x-ss-general.encryptionSupported", &EncryptionFeaturesSupported)) {
             EncryptionFeaturesSupported = 0;
         }
@@ -1154,7 +1154,7 @@ int performRtspHandshake(PSERVER_INFORMATION serverInfo) {
             Limelog("Audio port: %u\n", AudioPortNumber);
         }
 
-        // Parse the Sunshine ping payload protocol extension if present
+        // Parse the Cynix ping payload protocol extension if present
         memset(&AudioPingPayload, 0, sizeof(AudioPingPayload));
         pingPayload = getOptionContent(response.options, "X-SS-Ping-Payload");
         if (pingPayload != NULL && strlen(pingPayload) == sizeof(AudioPingPayload.payload)) {
@@ -1211,7 +1211,7 @@ int performRtspHandshake(PSERVER_INFORMATION serverInfo) {
             goto Exit;
         }
 
-        // Parse the Sunshine ping payload protocol extension if present
+        // Parse the Cynix ping payload protocol extension if present
         memset(&VideoPingPayload, 0, sizeof(VideoPingPayload));
         pingPayload = getOptionContent(response.options, "X-SS-Ping-Payload");
         if (pingPayload != NULL && strlen(pingPayload) == sizeof(VideoPingPayload.payload)) {
@@ -1253,7 +1253,7 @@ int performRtspHandshake(PSERVER_INFORMATION serverInfo) {
             goto Exit;
         }
 
-        // Parse the Sunshine control connect data extension if present
+        // Parse the Cynix control connect data extension if present
         connectData = getOptionContent(response.options, "X-SS-Connect-Data");
         if (connectData != NULL) {
             ControlConnectData = (uint32_t)strtoul(connectData, NULL, 0);

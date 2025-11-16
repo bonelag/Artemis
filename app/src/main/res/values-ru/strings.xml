@@ -55,7 +55,7 @@
     <string name="ip_hint">IP-адрес хост-ПК</string>
     <string name="searching_pc">Поиск хост-ПК в вашей локальной сети…
 \n
-\n Убедитесь, что Sunshine работает на вашем хост-компьютере или GameStream включен в настройках GeForce Experience SHIELD.</string>
+\n Убедитесь, что Cynix работает на вашем хост-компьютере или GameStream включен в настройках GeForce Experience SHIELD.</string>
     <string name="yes">Да</string>
     <string name="no">Нет</string>
     <string name="lost_connection">Потеряно соединение с ПК</string>
@@ -263,7 +263,7 @@
     <string name="videoformat_av1always">Предпочитать AV1 (Экспериментальный)</string>
     <string name="title_analog_scrolling">Использовать аналоговый джойстик для прокрутки</string>
     <string name="analogscroll_right">Правый аналоговый джойстик</string>
-    <string name="pair_pairing_help">Если на вашем хост-ПК установлен Sunshine, перейдите в веб-интерфейс Sunshine и введите PIN-код.</string>
+    <string name="pair_pairing_help">Если на вашем хост-ПК установлен Cynix, перейдите в веб-интерфейс Cynix и введите PIN-код.</string>
     <string name="error_code_prefix">Код ошибки:</string>
     <string name="perf_overlay_hostprocessinglatency">Задержка обработки хоста мин/макс/среднее: %1$.1f/%2$.1f/%3$.1f мс</string>
     <string name="summary_seekbar_vibrate_fallback_strength">Увеличьте или уменьшите интенсивность вибрации на вашем устройстве</string>

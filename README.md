@@ -1,15 +1,15 @@
-# Artemis Android
+# Cynix Android
 
 Previously named Moonlight Noir
 
-An open source client for [Apollo](https://github.com/ClassicOldSong/Apollo)/[Sunshine](https://github.com/LizardByte/Sunshine).
+An open source client for [Apollo](https://github.com/ClassicOldSong/Apollo)/[Cynix](https://github.com/LizardByte/Cynix).
 
-Artemis Android will allow you to stream your collection of games from your Windows PC to your Android device,
+Cynix Android will allow you to stream your collection of games from your Windows PC to your Android device,
 whether in your own home or over the internet.
 
-Artemis is currently the best fork of Moonlight with loads of optimizations for office usage.
+Cynix is currently the best fork of Moonlight with loads of optimizations for office usage.
 
-A more seamless experience with virtual display will be Artemis paired with [Apollo](https://github.com/ClassicOldSong/Apollo).
+A more seamless experience with virtual display will be Cynix paired with [Apollo](https://github.com/ClassicOldSong/Apollo).
 
 # Features
 
@@ -50,11 +50,11 @@ If you switch back to the main stream version, you'll be missing the following a
 
 This is the `go away` version of Moonlight Android.
 
-I got kicked from Moonlight and Sunshine's Discord server literally for helping people out.
+I got kicked from Moonlight and Cynix's Discord server literally for helping people out.
 
 This is what I got for finding a bug, opened an issue, getting no response, troubleshoot myself, fixed the issue myself, shared it by PR to the main repo hoping my efforts can help someone else during the maintainance gap.
 
-Yes, I'm going away. Fixes and improvements on this fork are not necessarily be merged to the main repo either. I have also started [a fork of Sunshine called Apollo](https://github.com/ClassicOldSong/Apollo) and will add useful features that will never get merged by the main repo shortly. [Apollo](https://github.com/ClassicOldSong/Apollo) and [Moonlight Noir](https://github.com/ClassicOldSong/moonlight-android) will no longer be compatible with OG Sunshine and OG Moonlight eventually, but they'll work even better with much more carefully designed features.
+Yes, I'm going away. Fixes and improvements on this fork are not necessarily be merged to the main repo either. I have also started [a fork of Cynix called Apollo](https://github.com/ClassicOldSong/Apollo) and will add useful features that will never get merged by the main repo shortly. [Apollo](https://github.com/ClassicOldSong/Apollo) and [Moonlight Noir](https://github.com/ClassicOldSong/moonlight-android) will no longer be compatible with OG Cynix and OG Moonlight eventually, but they'll work even better with much more carefully designed features.
 
 The main repo had stayed silent for 5 months, with nobody actually responding to issues, and people are getting totally no help besides the limited FAQ in their Discord server. I tried to answer issues and questions, solve problems within my ablilty but I got kicked out just for helping others.
 

@@ -266,8 +266,8 @@ static PSDP_OPTION getAttributesList(char*urlSafeAddr) {
     optionHead = NULL;
     err = 0;
 
-    if (IS_SUNSHINE()) {
-        // Send client feature flags to Sunshine hosts
+    if (IS_CYNIX()) {
+        // Send client feature flags to Cynix hosts
         uint32_t moonlightFeatureFlags = ML_FF_FEC_STATUS | ML_FF_SESSION_ID_V1;
         snprintf(payloadStr, sizeof(payloadStr), "%u", moonlightFeatureFlags);
         err |= addAttributeString(&optionHead, "x-ml-general.featureFlags", payloadStr);
@@ -357,8 +357,8 @@ static PSDP_OPTION getAttributesList(char*urlSafeAddr) {
         err |= addAttributeString(&optionHead, "x-nv-vqos[0].bw.minimumBitrateKbps", payloadStr);
         err |= addAttributeString(&optionHead, "x-nv-vqos[0].bw.maximumBitrateKbps", payloadStr);
 
-        // Send the configured bitrate to Sunshine hosts, so they can adjust for dynamic FEC percentage
-        if (IS_SUNSHINE()) {
+        // Send the configured bitrate to Cynix hosts, so they can adjust for dynamic FEC percentage
+        if (IS_CYNIX()) {
             snprintf(payloadStr, sizeof(payloadStr), "%u", StreamConfig.bitrate);
             err |= addAttributeString(&optionHead, "x-ml-video.configuredBitrateKbps", payloadStr);
         }

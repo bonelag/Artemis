@@ -32,7 +32,7 @@ uint16_t VideoPortNumber;
 SS_PING AudioPingPayload;
 SS_PING VideoPingPayload;
 uint32_t ControlConnectData;
-uint32_t SunshineFeatureFlags;
+uint32_t CynixFeatureFlags;
 uint32_t EncryptionFeaturesSupported;
 uint32_t EncryptionFeaturesRequested;
 uint32_t EncryptionFeaturesEnabled;
@@ -324,7 +324,7 @@ int LiStartConnection(PSERVER_INFORMATION serverInfo, PSTREAM_CONFIGURATION stre
     // 4K from RFI to avoid significant persistent artifacts after frame loss.
     if (StreamConfig.width == 3840 && StreamConfig.height == 2160 &&
             (VideoCallbacks.capabilities & CAPABILITY_REFERENCE_FRAME_INVALIDATION_AVC) &&
-            !IS_SUNSHINE()) {
+            !IS_CYNIX()) {
         Limelog("Disabling reference frame invalidation for 4K streaming with GFE\n");
         VideoCallbacks.capabilities &= ~CAPABILITY_REFERENCE_FRAME_INVALIDATION_AVC;
     }
