@@ -309,8 +309,7 @@ public class GameMenu implements Game.GameMenuCallbacks {
 
         options.add(new MenuOption(getString(R.string.game_menu_toggle_virtual_keyboard_model), true, game::toggleFullKeyboard));
 
-        options.add(new MenuOption(getString(R.string.game_menu_toggle_keyboard_model), true,
-                game::showHideKeyboardController));
+        options.add(new MenuOption(getString(R.string.game_menu_toggle_keyboard_model), true, game::toggleKeyboardController));
 
         if (game.allowChangeMouseMode) {
             options.add(new MenuOption(getString(R.string.game_menu_select_mouse_mode), true, () -> game.selectMouseMode(dialogScreenContext)));
