@@ -264,7 +264,7 @@ public class Game extends AppCompatActivity implements SurfaceHolder.Callback,
     public static final String EXTRA_SERVER_COMMANDS = "ServerCommands";
     public static final String EXTRA_DISPLAY_ID = "DisplayID";
 
-    public static final String CLIPBOARD_IDENTIFIER = "ArtemisStreaming";
+    public static final String CLIPBOARD_IDENTIFIER = "CynixStreaming";
 
     private String appUUID;
     private String host;

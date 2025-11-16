@@ -50,8 +50,8 @@ public class StartupTest {
 
     @Test
     public void testApplicationStartup() {
-        // Test ArtemisApplication creation and initialization
-        ArtemisApplication app = new ArtemisApplication();
+        // Test CynixApplication creation and initialization
+        CynixApplication app = new CynixApplication();
         app.onCreate();
 
         // Verify ProfilesManager was initialized

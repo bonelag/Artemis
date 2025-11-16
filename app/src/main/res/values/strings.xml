@@ -136,13 +136,13 @@
 
     <!-- Performance Report Sharing -->
     <string name="email_prefix_message">
-        Please send this email as-is to artemistics.logs@gmail.com to support the community.\n
+        Please send this email as-is to cynixtics.logs@gmail.com to support the community.\n
         Your shared performance data will help improve and expand the dataset available at:\n
         https://github.com/bonelag/Cynix
     </string>
 
-    <string name="email_recipient">artemistics.logs@gmail.com</string>
-    <string name="email_subject">Artemistics - Performance Log</string>
+    <string name="email_recipient">cynixtics.logs@gmail.com</string>
+    <string name="email_subject">Cynixtics - Performance Log</string>
     <string name="email_chooser_title">Send performance log...</string>
     <string name="toast_no_email_clients">No email clients installed.</string>
     <string name="toast_no_logs">There is no performance data stored yet.</string>
